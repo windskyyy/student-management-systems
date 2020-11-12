@@ -1,4 +1,4 @@
-# StudentControlSystem 优化版本的学生管理系统
+# StudentManagementSystem 优化版本的学生管理系统
 
 软件的功能：
 1. 支持超级管理员创建\删除普通管理账号，支持将管理员的账号密码存储到文件并且在程序运行时加载到程序中。
