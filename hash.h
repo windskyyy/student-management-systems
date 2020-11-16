@@ -12,8 +12,8 @@ struct Hash {
 	struct Stu_record *recordpoint; // 记录record类型指针
 	struct Stu_score *scorepoint;   // 记录score类型指针
 	struct Course *coursepoint;     // 记录course类型指针
-	char key[50];						// 记录下来键值的原本样子，所有的键值都是字符串类型。
-	char sid[20];						// 主键 学号
+	char key[50]; // char *key					// 记录下来键值的原本样子，所有的键值都是字符串类型。
+	char sid[20]; // char *sid						// 主键 学号
 } hash_name[100005], hash_sid[100005], hash_class[100005], hash_course[100005];
 
 
@@ -125,7 +125,7 @@ void bucketsort(struct node *a, int len) {
 		}
 	}
 	int nowpos = 0;
-	struct BucketNode *tempbucket = (struct BucketNode*) malloc (sizeof(struct BucketNode));
+	struct BucketNode *tempbucket;
 	for(int i = 0; i < 1000; i++) {
 		tempbucket = bucket[i].next;
 		while (tempbucket != nullptr) {
@@ -141,8 +141,7 @@ void bucketsort(struct node *a, int len) {
 
 // 插入档案的hash表, 先判断是否已经存在了。
 bool insert_recordHash(Hash *head, char *str, struct Stu_record *point, char *sid) {
-	struct Hash *cur = (struct Hash*) malloc (sizeof(struct Hash));
-	cur = head->next;
+	struct Hash *cur = head->next;
 	while (cur != nullptr) {
 		if (strcmp(str, cur->key) == 0 && strcmp(cur->sid, sid) == 0/* && cur->recordpoint != nullptr*/) {
 			// log(sprintf("冲突的学号 = %s\n", sid));
@@ -178,8 +177,7 @@ bool insert_recordHash(Hash *head, char *str, struct Stu_record *point, char *si
 // 插入成绩的hash表, 先判断是否已经存在了。
 bool insert_scoreHash(Hash *head, char *str, struct Stu_score *point, char *sid) {
 	// return true;
-	struct Hash *cur = (struct Hash*) malloc (sizeof(struct Hash));
-	cur = head->next;
+	struct Hash *cur = head->next;
 	while (cur != nullptr) {
 		// printf("\n\ncur->key = %s \t cur->sid = %s \t sid = %s \t str = %s \n\n", cur->key, cur->sid, sid, str); // debug
 		// if (cur->scorepoint != nullptr) {
@@ -222,8 +220,7 @@ bool insert_scoreHash(Hash *head, char *str, struct Stu_score *point, char *sid)
 // 插入课程的hash表, 先判断是否已经存在了。
 // 传进来Hash指针的head
 bool insert_courseHash(Hash *head, char *str, struct Course *point, char *sid = "") {
-	struct Hash *cur = (struct Hash*) malloc (sizeof(struct Hash));
-	cur = head->next;
+	struct Hash *cur = head->next;
 
 	while (cur != nullptr) {
 		if (strcmp(str, cur->key) == 0 && cur->coursepoint != nullptr) {
@@ -299,8 +296,7 @@ bool insert_hash_score(char *op, char *str, struct Stu_score *point, char *sid) 
 // 根据学号查询record的hash表
 struct Stu_record* select_recordHashBySid(char *sid) {
 	int key = getHash(sid);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_sid[key].head->next;
+	struct Hash *temp = hash_sid[key].head->next;
 	while(temp != nullptr) {
 		if (strcmp(temp->key, sid) == 0 && strcmp(temp->sid, sid) == 0 && temp->recordpoint != nullptr) {
 			return temp->recordpoint;
@@ -313,8 +309,7 @@ struct Stu_record* select_recordHashBySid(char *sid) {
 // 根据学号查询score的hash表
 struct Stu_score* select_scoreHashBySid(char *sid) {
 	int key = getHash(sid);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_sid[key].head->next;
+	struct Hash *temp = hash_sid[key].head->next;
 
 	while(temp != nullptr) {
 		if (strcmp(temp->key, sid) == 0 && strcmp(temp->sid, sid) == 0 && temp->scorepoint != nullptr) {
@@ -328,8 +323,7 @@ struct Stu_score* select_scoreHashBySid(char *sid) {
 // 根据姓名查询record的hash表, 直接输出，省事儿～
 void select_recordHashByName(char *name) {
 	int key = getHash(name);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_name[key].head->next;
+	struct Hash *temp = hash_name[key].head->next;
 
 	if (temp == nullptr) {
 		puts("没有这个学生");
@@ -349,8 +343,7 @@ void select_recordHashByName(char *name) {
 // 根据姓名查询score的hash表，直接输出所有数据 todo 调整输出的格式 更加好看一些～
 void select_scoreHashByName(char *name) {
 	int key = getHash(name);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_name[key].head->next;
+	struct Hash *temp = hash_name[key].head->next;
 
 	if (temp == nullptr) { // 说明是空的，没有这个键值
 		puts("没有这个学生");
@@ -358,7 +351,7 @@ void select_scoreHashByName(char *name) {
 	}
 
 	while(temp != nullptr) {
-		struct score_link *tempLink = (struct score_link*) malloc (sizeof(struct score_link));
+		struct score_link *tempLink;
 		if (strcmp(temp->key, name) == 0 && temp->scorepoint != nullptr) {
 			printf("%s %s %s\n", temp->scorepoint->sid, temp->scorepoint->name, temp->scorepoint->cla);
 			// tempLink = temp->scorepoint->head->next;
@@ -375,8 +368,7 @@ void select_scoreHashByName(char *name) {
 // 根据班级查询该班级的学生信息，可选两种方式
 void select_classHashByClass(char *cla, bool isRecord) {
 	int key = getHash(cla);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_class[key].head->next;
+	struct Hash *temp = hash_class[key].head->next;
 
 	if (temp == nullptr) { // 说明是空的，没有这个键值
 		puts("没有这个班级 或者 班级为空");
@@ -400,7 +392,7 @@ void select_classHashByClass(char *cla, bool isRecord) {
 					temp = temp->next;
 					continue;
 				}
-				struct score_link *tempLink = (struct score_link*) malloc (sizeof(struct score_link));
+				struct score_link *tempLink;
 				printf("%s %s %s\n", temp->scorepoint->sid, temp->scorepoint->name, temp->scorepoint->cla);
 				tempLink = temp->scorepoint->head;
 				while(tempLink != nullptr) {
@@ -422,8 +414,7 @@ bool exist_courseHashByCname(char *cname) {
 // 查询某个班级的男女比例
 void select_MenAndWomenPercentageByClass(char *cla) {
 	int key = getHash(cla);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_class[key].head->next;
+	struct Hash *temp = hash_class[key].head->next;
 
 	if (temp == nullptr) { // 说明是空的，没有这个键值
 		puts("没有这个班级 或者 班级为空");
@@ -448,8 +439,7 @@ void select_MenAndWomenPercentageByClass(char *cla) {
 // 查询某门课程的成绩分布
 void select_CourseScoreDistributionByCourse(char *course) {
 	int key = getHash(course);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_course[key].head->next;
+	struct Hash *temp = hash_course[key].head->next;
 
 	if (temp == nullptr) { // 说明是空的，没有这个键值
 		puts("没有这个课程");
@@ -461,10 +451,9 @@ void select_CourseScoreDistributionByCourse(char *course) {
 
 	while (temp != nullptr) {
 		if (strcmp(temp->key, course) == 0 && temp->scorepoint != nullptr) {
-			struct score_link *scorelink = (struct score_link*) malloc (sizeof (struct score_link));
-			scorelink = temp->scorepoint->head; // todo mk mistake
+			struct score_link *scorelink = temp->scorepoint->head; // todo mk mistake
 			if (scorelink == nullptr) {
-				printf("这个学生没有任何课程成绩\n");
+				log("这个学生没有任何课程成绩\n");
 				continue;
 			}
 			while (scorelink != nullptr) {
@@ -494,16 +483,15 @@ void select_CourseScoreDistributionByCourse(char *course) {
 		puts("没有一个人");
 		return ;
 	}
-	printf("maxn = %.2f minn = %.2f\n", maxScore, minScore);
+	printf("最高分 = %.2f 最低分 = %.2f\n", maxScore, minScore);
 	printf("一共有 %d人， 90分及以上有%d人， 80～89有%d人，70～79有%d人， 60～69有%d人， 有%d人不及格\n", cnt, cnt1, cnt2, cnt3, cnt4, cnt5);
 }
 
 // 查询某门课程的学生成绩，按照成绩排序输出，可以选择输出前n名
-void select_CourseScoreByCourse(char *course, bool desc = false,  int limit = -1) {
+void select_CourseScoreByCourse(char *course, bool desc,  int limit) {
 
 	int key = getHash(course);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash*));
-	temp = hash_course[key].head->next;
+	struct Hash *temp = hash_course[key].head->next;
 
 	if (temp == nullptr) { // 说明是空的，没有这个键值
 		puts("没有这个课程");
@@ -515,8 +503,7 @@ void select_CourseScoreByCourse(char *course, bool desc = false,  int limit = -1
 
 	while (temp != nullptr) {
 		if (strcmp(temp->key, course) == 0 && temp->scorepoint != nullptr) {
-			struct score_link *scorelink = (struct score_link*) malloc (sizeof (struct score_link));
-			scorelink = temp->scorepoint->head; 
+			struct score_link *scorelink = temp->scorepoint->head; 
 			if (scorelink == nullptr) {
 				puts("这个学生没有任何课程成绩");// log
 				continue;
@@ -545,8 +532,9 @@ void select_CourseScoreByCourse(char *course, bool desc = false,  int limit = -1
 		}
 	} 
 	if (limit == -1) limit = top;
-	limit = top;
-	for(int i = 0; i < top; i++) {
+	// limit = top;
+	limit = limit > top ? top : limit;
+	for(int i = 0; i < limit; i++) {
 		printf("sid = %s name = %s score = %.2f\n", scoreSort[i].sid, scoreSort[i].name, scoreSort[i].score);
 	}	
 }
@@ -554,8 +542,7 @@ void select_CourseScoreByCourse(char *course, bool desc = false,  int limit = -1
 // 从score的链表中拿到课程名，然后去课程hash表里删掉学生的信息。
 bool deleteStduentCourseInfoByCourse(char *cname, char *sid) {
 	int key = getHash(cname);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash));
-	temp = hash_course[key].head->next;
+	struct Hash *temp = hash_course[key].head->next;
 
 	if (temp == nullptr) {
 		return false;
@@ -582,8 +569,7 @@ bool deleteStudentInfoBySid(char *sid) {
 	// 先判断是否存在
 	int keySid = getHash(sid);
 
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash));
-	temp = hash_sid[keySid].head->next;
+	struct Hash *temp = hash_sid[keySid].head->next;
 
 	if (temp == nullptr) {
 		puts("没有此学生");
@@ -603,8 +589,7 @@ bool deleteStudentInfoBySid(char *sid) {
 				if (temp->recordpoint->next != nullptr) temp->recordpoint->next->prev = temp->recordpoint->prev;
 			}
 			if (temp->scorepoint != nullptr && temp->scorepoint->head != nullptr) {
-				struct score_link *templink = (struct score_link*) malloc (sizeof(struct score_link));
-				templink = temp->scorepoint->head;
+				struct score_link *templink = temp->scorepoint->head;
 				while (templink != nullptr) {
 					deleteStduentCourseInfoByCourse(templink->course, sid);
 					templink = templink->next;
@@ -659,8 +644,7 @@ bool deleteStudentInfoBySid(char *sid) {
 
 struct Hash* exist_studentBySid(char *sid) {
 	int key = getHash(sid);
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash));
-	temp = hash_sid[key].head->next;
+	struct Hash *temp = hash_sid[key].head->next;
 
 	while (temp != nullptr) {
 		if (strcmp(sid, temp->sid) == 0){
@@ -675,8 +659,8 @@ struct Hash* exist_studentBySid(char *sid) {
 void alterStudentRecordBySid() {
 	char sid[15], name[50], gender[10], cla[50], stufrom[50];
 	Date birth;
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash));
-	struct Hash *t = (struct Hash*) malloc (sizeof(struct Hash));
+	struct Hash *temp;
+	struct Hash *t;
 	while (true) {
 		puts("支持批量修改，输入学号，以end为结尾");
 		scanf("%s", sid);
@@ -753,7 +737,7 @@ void alterStudentRecordBySid() {
 void alterStudentScoreByCourse(char *course) {
 	char sid[15];
 	double score;
-	struct Hash *temp = (struct Hash*) malloc (sizeof(struct Hash));
+	struct Hash *temp;
 	while (true) {
 		puts("支持批量输入，输入学生的学号 成绩进行修改，以end为结尾");
 		scanf("%s", sid);
@@ -767,13 +751,11 @@ void alterStudentScoreByCourse(char *course) {
 			continue;
 		}
 
-		struct score_link *temp_scorelink = (struct score_link *) malloc (sizeof(struct score_link));
-
 		if (temp->scorepoint == nullptr) {
 			log("scorepoint为nullptr"); // log
 		}
 
-		temp_scorelink = temp->scorepoint->head;
+		struct score_link *temp_scorelink = temp->scorepoint->head;
 
 		while (temp_scorelink != nullptr) {
 			if (strcmp(temp_scorelink->course, course) == 0) {

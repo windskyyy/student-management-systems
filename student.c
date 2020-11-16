@@ -3,10 +3,12 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
-// #include <iostream>
+#include <iostream>
 #include "student.h"
 #include "hash.h"
 #include "admin.h"
+
+using namespace std;
 
 
 void inputStudentRecordByFile(char *file_name) ;
@@ -22,7 +24,6 @@ void inputCourseByFile(char *file_name) ;
 //  freopen("CON","w",stdout);  
 
 
-// sptr = (struct data*)malloc(sizeof(struct data));
 struct Stu_record *recordRoot = (struct Stu_record*) malloc (sizeof(struct Stu_record));
 struct Stu_record *recordCur  = (struct Stu_record*) malloc (sizeof(struct Stu_record));
  
@@ -184,8 +185,7 @@ void saveRecord() {
 		return ;
 	}
 
-	struct Stu_record *t = (struct Stu_record*) malloc (sizeof(struct Stu_record));
-	t = recordRoot->next;
+	struct Stu_record *t = recordRoot->next;
 	char *out = getNowTimeString();
 	char s[100] = "/Users/xutianmeng/Desktop/big_homework/save_record_";
 	strcat(s, out);
@@ -212,8 +212,7 @@ void saveScore() {
 		return ;
 	}
 
-	struct Stu_score *t = (struct Stu_score*) malloc (sizeof(struct Stu_score));
-	t = scoreRoot->next;
+	struct Stu_score *t = scoreRoot->next;
 	char *out = getNowTimeString();
 	char s[100] = "/Users/xutianmeng/Desktop/big_homework/save_score_";
 	strcat(s, out); // TODO
@@ -254,8 +253,7 @@ void saveCourse() {
 		return ;
 	}
 
-	struct Course *t = (struct Course*) malloc (sizeof(struct Course));
-	t = subjectRoot->next;
+	struct Course *t = subjectRoot->next;
 	char *out = getNowTimeString();
 	char s[100] = "/Users/xutianmeng/Desktop/big_homework/save_course_";
 	strcat(s, out);
@@ -281,8 +279,7 @@ void saveCourse() {
 // scorepoint && recordpoint 都在hash_sid中有一份，所以op=2的时候free，op = 0的时候只置为null。
 void dealClear(Hash *root, int op = 0) {
 
-	struct Hash *cur = (struct Hash*) malloc (sizeof(struct Hash));
-	cur = root->next;
+	struct Hash *cur = root->next;
 
 	while (cur != nullptr) {
 
@@ -293,8 +290,7 @@ void dealClear(Hash *root, int op = 0) {
 
 		if (cur->scorepoint != nullptr) {
 			if (op == 1) {
-				struct score_link *temp = (struct score_link *) malloc (sizeof(struct score_link));
-				temp = cur->scorepoint->head;
+				struct score_link *temp = cur->scorepoint->head;
 				while (temp != nullptr) {
 					free (temp);
 					temp = temp->next;
@@ -458,8 +454,7 @@ void test() {
 	// 浅拷贝的问题
 	puts("\n\n************ test ***************");
 	int key = getHash("math");
-	struct Hash *cur = (struct Hash*) malloc (sizeof(struct Hash));
-	cur = hash_course[key].head;
+	struct Hash *cur = hash_course[key].head;
 	while (cur != nullptr) {
 		printf("cur->key = %s \t cur->sid = %s \t\n\n", cur->key, cur->sid); // debug
 		if (cur->scorepoint != nullptr) {
@@ -482,8 +477,7 @@ void inputStudentScore() {
 		if (judge(sid)) break;
 		// if (strcmp(sid, "end") == 0) break;
 		// test();
-		struct Stu_record *temp = (struct Stu_record*) malloc (sizeof(struct Stu_record));
-		temp = select_recordHashBySid(sid);
+		struct Stu_record *temp = select_recordHashBySid(sid);
 		if (temp == nullptr) { // not exist the student
 			puts("输入有误，该学生不存在，可以在学生档案系统录入该生");
 			continue;
@@ -542,8 +536,7 @@ void inputStudentScore() {
 
 			bool isrepeat = false;
 			// 判断是否重复插入
-			struct score_link *tt = (struct score_link*) malloc (sizeof(struct score_link));
-			tt = t->head;
+			struct score_link *tt = t->head;
 			while (tt != nullptr) {
 				if (strcmp(tt->course, course) == 0) {
 					isrepeat = true;
@@ -598,8 +591,7 @@ void inputStudentScoreByFile(char *file_name) {
 	while(fscanf(fp, "%s %d", sid, &cnt) != EOF) {
 		// 支持随机大小写的end 
 		// if (judge(sid)) break;
-		struct Stu_record *temp = (struct Stu_record*) malloc (sizeof(struct Stu_record));
-		temp = select_recordHashBySid(sid);
+		struct Stu_record *temp = select_recordHashBySid(sid);
 		if (temp == nullptr) { // not exist the student
 			log("输入有误，该学生不存在，可以在学生档案系统录入该生");
 			continue;
@@ -674,11 +666,20 @@ void inputCourse() {
 	puts("批量输入课程名称, 以end为结尾");
 	char cname[30];
 	while(scanf("%s", cname) != EOF) {
-		struct Course *temp = (struct Course*) malloc (sizeof(struct Course)); // 
 		// 支持随机大小写的end 
 		if (judge(cname)) break;
+
+		if (exist_courseHashByCname(cname) == true) {
+			puts("该课程已经存在，请勿重复插入");
+			log("插入课程 重复");
+			continue;
+		}
+
 		// if (strcmp(cname, "end") == 0) break;
+		struct Course *temp = (struct Course*) malloc (sizeof(struct Course)); // 
 		strcpy(temp->cname, cname);
+
+
 
 		if (!insert_hash_course("course", cname, temp)) {
 			log("向hash_course索引插入course失败"); // log
@@ -727,8 +728,7 @@ void queryRecordHashInfoBySid() {
 		if (judge(sid)) break;
 		// if (strcmp(sid, "end") == 0) break;
 
-		struct Stu_record *info = (struct Stu_record*) malloc (sizeof(struct Stu_record));
-		info = select_recordHashBySid(sid);
+		struct Stu_record *info = select_recordHashBySid(sid);
 		if (info == nullptr) {
 			puts("该学生还没有插入过档案");
 			continue;
@@ -749,15 +749,13 @@ void queryScoreHashInfoBySid() {
 		if (judge(sid)) break;
 		// if (strcmp(sid, "end") == 0) break;
 
-		struct Stu_score *info = (struct Stu_score*) malloc (sizeof(struct Stu_score));
-		info = select_scoreHashBySid(sid);
+		struct Stu_score *info = select_scoreHashBySid(sid);
 		if (info == nullptr) {
 			puts("该学生还没有插入过成绩");
 			continue;
 		}
-		struct score_link *tempLink = (struct score_link*) malloc (sizeof(struct score_link));
 		printf("%s %s %s\n", info->sid, info->name, info->cla);
-		tempLink = info->head;
+		struct score_link *tempLink = info->head;
 		while(tempLink != nullptr) {
 			printf("%s %.2f\n", tempLink->course, tempLink->score);
 			tempLink = tempLink->next;
@@ -810,7 +808,11 @@ void queryCouserInfoByCname() {
 		// 支持随机大小写的end 
 		if (judge(cname)) break;
 		// if (strcmp(cname, "end") == 0) break;
-		exist_courseHashByCname(cname);
+		if (exist_courseHashByCname(cname) == true) {
+			puts("该课程存在");
+		} else {
+			puts("该课程不存在");
+		}
 	}
 }
 
@@ -1066,7 +1068,8 @@ void adminmenu() {
 
 int main() {
 
-	int adminId = logincheck();
+	// int adminId = logincheck();
+	int adminId = 1;
 	if (adminId == 0) return 0;
 
 	init();
@@ -1113,11 +1116,6 @@ int main() {
 				break;
 		}
 	}
-
-	return 0;
-	
-		
-	
 
 	return 0;
 }

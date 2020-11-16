@@ -14,7 +14,7 @@ int logincheck() {
 	// 先读入之前记录的账号密码
 	if (isFirstLogin == true) {
 		isFirstLogin = false;
-		FILE *fp = fopen(adminFile, "r+");
+		FILE *fp = fopen(adminFile, "r");
 		while (fscanf(fp, "%s %s", loginaccount, loginpassword) != EOF) {
 			insertAdmin(loginaccount,loginpassword);
 		}
@@ -29,8 +29,7 @@ int logincheck() {
 			puts("超级管理员登陆， 验证成功");
 			return 1;
 		}
-		struct AdminInfo *temp = (struct AdminInfo*) malloc (sizeof(struct AdminInfo));
-		temp = AdminInfoLink;
+		struct AdminInfo *temp = AdminInfoLink;
 		while (temp != nullptr) {
 			if (strcmp(loginaccount,temp->account) == 0 && strcmp(loginpassword, temp->password) == 0) {
 				puts("普通管理员登陆， 验证成功");
@@ -45,8 +44,7 @@ int logincheck() {
 // 判断是否重复
 bool existAdmin(char *account) {
 	if (strcmp(account, accountROOT) == 0) return true;
-	struct AdminInfo *temp = (struct AdminInfo*) malloc (sizeof(struct AdminInfo));
-	temp = AdminInfoLink;
+	struct AdminInfo *temp = AdminInfoLink;
 	while (temp != nullptr) {
 		if (strcmp(account,temp->account) == 0) {
 			return true;
@@ -117,8 +115,7 @@ void deleteAdmin() {
 			temp = AdminInfoLink;
 			while (temp != nullptr && temp->next != nullptr) {
 				if (strcmp(temp->next->account, account) == 0) {
-					struct AdminInfo *q = (struct AdminInfo*) malloc (sizeof(struct AdminInfo));
-					q = temp->next;
+					struct AdminInfo *q = temp->next;
 					temp->next = temp->next->next;
 					free(q);
 					puts("删除成功");
@@ -129,8 +126,7 @@ void deleteAdmin() {
 		}
 	}
 	FILE *fp = fopen(adminFile, "w");
-	struct AdminInfo *t = (struct AdminInfo*) malloc (sizeof(struct AdminInfo));
-	t = AdminInfoLink;
+	struct AdminInfo *t = AdminInfoLink;
 	while (t != nullptr) {
 		fprintf(fp, "%s %s\n", t->account, t->password);
 		t = t->next;
@@ -139,8 +135,7 @@ void deleteAdmin() {
 }
 
 void showAdmin() {
-	struct AdminInfo *temp = (struct AdminInfo*) malloc (sizeof(struct AdminInfo));
-	temp = AdminInfoLink;
+	struct AdminInfo *temp = AdminInfoLink;
 	int number = 0;
 	bool first = 1;
 	while (temp != nullptr) {
